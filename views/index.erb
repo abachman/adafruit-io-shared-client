@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+
+  <head>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"></script>
+
+    <script>
+      $(function () {
+        $('#button-click').on('click', function (evt) {
+          $.ajax({
+            url: '/update',
+            type: 'POST',
+            data: {key: 'button-click', value: '1'}
+          }).done(function () {
+            console.log("data sent!")
+          }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("FAILED", jqXHR)
+          });
+        })
+
+        // Update .
+        $('#color-set-button').on('click', function (evt) {
+          $.ajax({
+            url: '/update',
+            type: 'POST',
+            data: {key: 'color-set', value: $('#color-set').val()}
+          }).then(function () {
+            console.log("data sent!")
+          }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("FAILED", jqXHR)
+          });
+        })
+
+        // Poll IO to get current values for all the feeds we care about.
+        setInterval(function () {
+          $.ajax({
+            url: '/check',
+            data: {feeds: 'color-set'},
+            type: 'GET'
+          }).done(function (data) {
+            if (data['color-set'] && data['color-set'].value) {
+              var nextVal = data['color-set'].value
+
+              if (nextVal !== $('#color-set').val()) {
+                $('#color-set').val(nextVal)
+                console.log('updated color-set input to', nextVal)
+              }
+            }
+          })
+        }, 5000)
+      })
+    </script>
+  </head>
+
+  <body>
+    <h1>IO SAMPLE</h1>
+
+    <p>
+      <button id='button-click'>
+        Click!
+      </button>
+    </p>
+
+    <p>
+      <input id='color-set' type='color'/>
+      <button id='color-set-button'>Update Color</button>
+    </p>
+
+  </body>
+</html>
