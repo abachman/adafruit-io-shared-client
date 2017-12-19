@@ -13,8 +13,13 @@
             url: '/update',
             type: 'POST',
             data: {key: 'button-click', value: '1'}
-          }).done(function () {
-            console.log("data sent!")
+          }).done(function (data) {
+            if (data.success) {
+              console.log("data sent!")
+              status("BUTTON SENT!")
+            } else {
+              status("BUTTON WAIT " + data.wait)
+            }
           }).fail(function (jqXHR, textStatus, errorThrown) {
             console.error("FAILED", jqXHR)
           });
@@ -26,15 +31,35 @@
             url: '/update',
             type: 'POST',
             data: {key: 'color-set', value: $('#color-set').val()}
-          }).then(function () {
-            console.log("data sent!")
+          }).then(function (data) {
+            if (data.success) {
+              console.log("data sent!")
+              status("COLOR SENT!")
+            } else {
+              status("COLOR WAIT " + data.wait)
+            }
           }).fail(function (jqXHR, textStatus, errorThrown) {
             console.error("FAILED", jqXHR)
           });
         })
 
+        // Post status message, clear after a bit
+        var status_timeout = null
+        var status = function (message) {
+          var time = new Date()
+          $('.status').text(`[${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}] ${message}`)
+
+          if (status_timeout) {
+            clearTimeout(status_timeout);
+          }
+
+          status_timeout = setTimeout(function () {
+            $('.status').text('')
+          }, 5000)
+        }
+
         // Poll IO to get current values for all the feeds we care about.
-        setInterval(function () {
+        var check_color = function() {
           $.ajax({
             url: '/check',
             data: {feeds: 'color-set'},
@@ -46,10 +71,14 @@
               if (nextVal !== $('#color-set').val()) {
                 $('#color-set').val(nextVal)
                 console.log('updated color-set input to', nextVal)
+                status("UPDATED COLOR")
               }
             }
           })
-        }, 60000)
+        }
+
+        setInterval(check_color, 60000)
+        check_color()
       })
     </script>
   </head>
@@ -58,14 +87,21 @@
     <h1>IO SAMPLE</h1>
 
     <p>
-      <button id='button-click'>
-        Click!
-      </button>
+      <label>Send '1' to button-click feed:
+        <button id='button-click'>
+          Click!
+        </button>
+      </label>
     </p>
 
     <p>
-      <input id='color-set' type='color'/>
-      <button id='color-set-button'>Update Color</button>
+      <label>
+        Select Color:
+        <input id='color-set' type='color' value=''/>
+      </label>
+      <button id='color-set-button'>Click to Update Color</button>
     </p>
+
+    <p class='status' style='font-family:monospace'></p>
   </body>
 </html>

@@ -2,9 +2,12 @@
 
 Should run on Heroku, as is.
 
-This is a very very barebones example of a custom web app using the Adafruit IO Ruby client, Sinatra, and a smidgen of jQuery to exchange data with Adafruit IO.
+This is a very very barebones example of a custom web app using the Adafruit IO
+Ruby client, Sinatra, a smidgen of jQuery to exchange data with Adafruit IO,
+and enough caching to prevent hammering your account limits.
 
-NOTE: If you build a site like this and open it to the public, you'll probably exceed your API limit pretty quick :D
+NOTE: If you build a site like this and open it to the public, you'll probably
+exceed your API limit pretty quick :| Caching helps _a lot_.
 
 ### Sign up for Adafruit IO
 
