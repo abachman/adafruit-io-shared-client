@@ -19,6 +19,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
+    haikunator (1.1.0)
     i18n (0.9.1)
       concurrent-ruby (~> 1.0)
     memcachier (0.0.2)
@@ -47,6 +48,7 @@ PLATFORMS
 DEPENDENCIES
   adafruit-io (~> 2.0.0.beta)
   dalli
+  haikunator
   memcachier
   sinatra
   thin

@@ -8,3 +8,6 @@ gem 'thin'
 gem "memcachier"
 gem "dalli"
 
+# for fun
+gem 'haikunator'
+

@@ -4,6 +4,7 @@ require 'adafruit/io'
 require 'json'
 require 'memcachier'
 require 'dalli'
+require 'haikunator'
 
 # caching / rate limiting support
 ENV["MEMCACHE_SERVERS"] = ENV["MEMCACHIER_SERVERS"]
@@ -25,11 +26,25 @@ end
 
 class AdafruitApp < Sinatra::Base
   set :session, true
+  enable :sessions
+
   set :erb, {:format => :html5 }
   set :root, File.dirname(__FILE__)
   set :public_folder, Proc.new { File.join(root, "public") }
 
   set :cache, Dalli::Client.new
+
+  # use session cookies to store a unique nickname for browser sessions
+  def set_name
+    @name = session[:name]
+    if @name.nil?
+      @name = session[:name] = Haikunator.haikunate
+    end
+  end
+
+  before do
+    set_name
+  end
 
   get '/' do
     erb :index
@@ -82,6 +97,7 @@ class AdafruitApp < Sinatra::Base
       end
 
       $io_client.send_data(feed_key, value)
+      $io_client.send_data('data-origin', "#{@name} updated #{feed_key}")
 
       success = true
 
