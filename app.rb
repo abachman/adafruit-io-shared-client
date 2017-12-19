@@ -31,10 +31,13 @@ class AdafruitApp < Sinatra::Base
       data = {}
       keys = feeds.split(',')
       keys.each do |k|
+        # get most recent data point for the given feed
         response = $io_client.data(k, limit: 1)
 
         if response
           data[k] = response[0]
+        else
+          data[k] = nil
         end
       end
       data.to_json
