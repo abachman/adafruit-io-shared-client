@@ -82,7 +82,6 @@ class AdafruitApp < Sinatra::Base
       end
 
       $io_client.send_data(feed_key, value)
-      $io_client.send_data('data-origin', request.ip)
 
       success = true
 
